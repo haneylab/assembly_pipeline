@@ -1,0 +1,10 @@
+# conda dependencies for assembly pipeline
+channels:
+  bioconda
+
+packages:
+  trimmomatic =0.39
+  pear =0.9.6
+  spades =3.13.1
+  prokka =1.12
+  hmmer =3.2.1

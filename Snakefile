@@ -2,9 +2,8 @@
 # Andrew Wilson
 # Haney Lab, UBC
 
-
 sample = "{sample}"
-d = "data/{sample}"
+d = f"data/{sample}"
 temps = ["data/*/*.trimmed.*.fastq", "data/*/*.pear.*.fastq",
 "data/*/*all.singles.fastq"]
 
@@ -14,7 +13,8 @@ rule all:
 rule clean:
     shell:
         "rm -rf data/*/assembly/ \
-        rm -f {temps}"
+        rm -f {temps} \
+        rm -rf data/*/bowtie2"
 
 # Read trimming with trimmomatic
 rule quality_trim:
@@ -77,20 +77,6 @@ rule assemble:
         "spades.py -m 16 -s {input.singles} -1 {input.fw} -2 {input.rev} \
         --careful --cov-cutoff auto -o {params}"
 
-# Preliminary annotation with Prokka
-rule annotation:
-    input:
-        f"{d}/assembly/contigs.fasta"
-    params:
-        f"{d}/assembly/annotation/"
-    output:
-        gff = f"{d}/assembly/annotation/{sample}.gff"
-    log:
-        f"{d}/logs/prokka_log1.txt"
-    shell:
-        "prokka --genus Pseudomonas --strain {sample} --locustag {sample} \
-        --prefix {sample} --cpus 8 --outdir {params} {input}"
-
 # Detection of PhiX contigs with nhmmer
 rule PhiX_hits:
     input:
@@ -98,14 +84,17 @@ rule PhiX_hits:
     output:
         f"{d}/assembly/{sample}.phiX.hits"
     shell:
-        "nhmmer --tblout {output} tools/phiX.fna {input}"
+        "nhmmer --tblout {output} tools/PhiX.fna {input}"
 
 # Generation of assembly statistics using a modified GetGenomeStats.py
 rule assembly_stats:
-
+    input:
+        contigs = f"{d}/assembly/contigs.fna"
+        phix = f"{d}/assembly/{sample}.phiX.hits
+        cov = f"{d}/alignment_stats.txt"
 
 # Annotation of the filtered contigs
-rule final_annotation:
+rule annotation:
     input:
 
     output:

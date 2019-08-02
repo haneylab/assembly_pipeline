@@ -89,12 +89,24 @@ rule PhiX_hits:
 # Generation of assembly statistics using a modified GetGenomeStats.py
 rule assembly_stats:
     input:
-        contigs = f"{d}/assembly/contigs.fna"
-        phix = f"{d}/assembly/{sample}.phiX.hits
-        cov = f"{d}/alignment_stats.txt"
+        contigs = f"{d}/assembly/contigs.fasta",
+        phix = f"{d}/assembly/{sample}.phiX.hits"
+    output:
+        f"{d}/assembly_stats.txt",
+        f"{d}/{sample}.fasta"
+    script:
+        "tools/assembly_stats.py"
 
 # Annotation of the filtered contigs
 rule annotation:
     input:
-
+        f"{d}/{sample}.fasta"
+    params:
+        outdir=f"{d}/{sample}.prokka/",
+        sample=f"{sample}"
     output:
+        f"{d}/{sample}.prokka/{sample}.fna"
+    shell:
+        "prokka --force --outdir {params.outdir} --genus Pseudomonas --strain \
+        {params.sample} --prefix {params.sample} --locustag {params.sample} \
+        {input}"

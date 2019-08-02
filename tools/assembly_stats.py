@@ -67,8 +67,4 @@ ff = open(snakemake.output[1], "w")
 ff.write(fasta)
 ff.close()
 
-#Remove short contigs and PhiX
-#NODE_214_length_5513_cov_214.132195
-#phix = is_phix(snakemake.input[1])
-
 

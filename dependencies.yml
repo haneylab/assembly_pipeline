@@ -299,7 +299,7 @@ dependencies:
   - spades=3.13.1
   - sqlite=3.28.0
   - tbb=2019.4
-  - tbl2asn=25.6
+  - tbl2asn=25.7
   - tidyp=1.04
   - tk=8.6.9
   - trimmomatic=0.39

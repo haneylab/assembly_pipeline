@@ -2,14 +2,14 @@
 # Andrew Wilson
 # Haney Lab, UBC
 
-sample = "{sample}"
-d = f"data/{sample}"
+SAMPLES = ["CH261", "CH253", "DC105", "PB126", "GXM4"]
+
 temps = ["data/*/*.trimmed.*.fastq", "data/*/*.pear.*.fastq",
 "data/*/*all.singles.fastq"]
 
 rule all:
-    input:
-        f"{d}/assembly_stats.txt"
+    input: expand("data/{samples}/{samples}.prokka/{samples}.fna", samples=SAMPLES)
+
 rule clean:
     shell:
         "rm -rf data/*/assembly/ \
@@ -19,15 +19,15 @@ rule clean:
 # Read trimming with trimmomatic
 rule quality_trim:
     input:
-        rf = "data/reads/{sample}_1.fastq",
-        rr = "data/reads/{sample}_2.fastq"
+        rf = "data/reads/{samples}_1.fastq",
+        rr = "data/reads/{samples}_2.fastq"
     output:
-        fp=f"{d}/{sample}.trimmed.1.p.fastq",
-        fu=f"{d}/{sample}.trimmed.1.u.fastq",
-        rp=f"{d}/{sample}.trimmed.2.p.fastq",
-        ru=f"{d}/{sample}.trimmed.2.u.fastq",
+        fp="data/{samples}/{samples}.trimmed.1.p.fastq",
+        fu="data/{samples}/{samples}.trimmed.1.u.fastq",
+        rp="data/{samples}/{samples}.trimmed.2.p.fastq",
+        ru="data/{samples}/{samples}.trimmed.2.u.fastq",
     log:
-        f"{d}/logs/trim_log.txt"
+        "data/{samples}/logs/trim_log.txt"
     shell:
         "trimmomatic PE {input.rf} {input.rr} \
         {output.fp} {output.fu} {output.rp} {output.ru} \
@@ -37,42 +37,42 @@ rule quality_trim:
 # Read merging in PEAR
 rule pear:
     input:
-        fw = f"{d}/{sample}.trimmed.1.p.fastq",
-        rev = f"{d}/{sample}.trimmed.1.p.fastq"
+        fw = "data/{samples}/{samples}.trimmed.1.p.fastq",
+        rev = "data/{samples}/{samples}.trimmed.1.p.fastq"
     params:
-        f"{d}/{sample}.pear"
+        "data/{samples}/{samples}.pear"
     output:
-        uf = f"{d}/{sample}.pear.unassembled.forward.fastq",
-        ur = f"{d}/{sample}.pear.unassembled.reverse.fastq",
-        a = f"{d}/{sample}.pear.assembled.fastq"
+        uf = "data/{samples}/{samples}.pear.unassembled.forward.fastq",
+        ur = "data/{samples}/{samples}.pear.unassembled.reverse.fastq",
+        a = "data/{samples}/{samples}.pear.assembled.fastq"
     log:
-        f"{d}/logs/pear_log.txt"
+        "data/{samples}/logs/pear_log.txt"
     shell:
         "pear -j 4 -f {input.fw} -r {input.rev} -o {params}"
 
 # Putting all single-end reads into one file
 rule file_prep:
     input:
-        fw = f"{d}/{sample}.trimmed.1.u.fastq",
-        rev = f"{d}/{sample}.trimmed.2.u.fastq",
-        pear = f"{d}/{sample}.pear.assembled.fastq"
+        fw = "data/{samples}/{samples}.trimmed.1.u.fastq",
+        rev = "data/{samples}/{samples}.trimmed.2.u.fastq",
+        pear = "data/{samples}/{samples}.pear.assembled.fastq"
     output:
-        f"{d}/{sample}.all.singles.fastq"
+        "data/{samples}/{samples}.all.singles.fastq"
     shell:
         "cat {input.fw} {input.rev} > {output}"
 
 # de novo Genome assembly with SPAdes
 rule assemble:
     input:
-        fw = f"{d}/{sample}.pear.unassembled.forward.fastq",
-        rev = f"{d}/{sample}.pear.unassembled.reverse.fastq",
-        singles = f"{d}/{sample}.all.singles.fastq"
+        fw = "data/{samples}/{samples}.pear.unassembled.forward.fastq",
+        rev = "data/{samples}/{samples}.pear.unassembled.reverse.fastq",
+        singles = "data/{samples}/{samples}.all.singles.fastq"
     params:
-        f"{d}/assembly"
+        "data/{samples}/assembly"
     output:
-        contigs = f"{d}/assembly/contigs.fasta"
+        contigs = "data/{samples}/assembly/contigs.fasta"
     log:
-        f"{d}/logs/assembly_log.txt"
+        "data/{samples}/logs/assembly_log.txt"
     shell:
         "spades.py -m 16 -s {input.singles} -1 {input.fw} -2 {input.rev} \
         --careful --cov-cutoff auto -o {params}"
@@ -80,32 +80,32 @@ rule assemble:
 # Detection of PhiX contigs with nhmmer
 rule PhiX_hits:
     input:
-        f"{d}/assembly/contigs.fasta"
+        "data/{samples}/assembly/contigs.fasta"
     output:
-        f"{d}/assembly/{sample}.phiX.hits"
+        "data/{samples}/assembly/{samples}.phiX.hits"
     shell:
         "nhmmer --tblout {output} tools/PhiX.fna {input}"
 
 # Generation of assembly statistics using a modified GetGenomeStats.py
 rule assembly_stats:
     input:
-        contigs = f"{d}/assembly/contigs.fasta",
-        phix = f"{d}/assembly/{sample}.phiX.hits"
+        contigs = "data/{samples}/assembly/contigs.fasta",
+        phix = "data/{samples}/assembly/{samples}.phiX.hits"
     output:
-        f"{d}/assembly_stats.txt",
-        f"{d}/{sample}.fasta"
+        "data/{samples}/assembly_stats.txt",
+        "data/{samples}/{samples}.fasta"
     script:
         "tools/assembly_stats.py"
 
 # Annotation of the filtered contigs
 rule annotation:
     input:
-        f"{d}/{sample}.fasta"
+        "data/{samples}/{samples}.fasta"
     params:
-        outdir=f"{d}/{sample}.prokka/",
-        sample=f"{sample}"
+        outdir="data/{samples}/{samples}.prokka/",
+        sample="{samples}"
     output:
-        f"{d}/{sample}.prokka/{sample}.fna"
+        "data/{samples}/{samples}.prokka/{samples}.fna"
     shell:
         "prokka --force --outdir {params.outdir} --genus Pseudomonas --strain \
         {params.sample} --prefix {params.sample} --locustag {params.sample} \

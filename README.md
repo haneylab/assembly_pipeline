@@ -9,7 +9,7 @@ Ensure that you have a recent version of conda installed on your computer. I rec
 
 2. Run the command `chmod u-w data/reads/*.fastq` so that you can't accidentally delete or rewrite your read files.
 
-3. Open the `Snakefile` in your favourite text editor, like nano or vim. Change the `SAMPLES` list on line 5 so that it contains your strains. Strain names need to be in quotations and separated by commas, and the entire list needs to be enclosed in square brackets.
+3. Open the `Snakefile` in your favourite text editor. Change the `SAMPLES` list on line 5 so that it contains your strains. Strain names need to be in quotations and separated by commas, and the entire list needs to be enclosed in square brackets.
 
 4. Activate the conda enviroment by typing `conda activate assembly_pipeline`. In your terminal, type `snakemake` and wait for the pipeline to run.
 

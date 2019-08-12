@@ -2,7 +2,7 @@
 # Andrew Wilson
 # Haney Lab, UBC
 
-SAMPLES = ["CH261", "CH253", "DC105", "PB126", "GXM4"]
+SAMPLES = # Enter samples here ex. ["CH261", "CH253", "DC105", "PB126", "GXM4"]
 
 temps = ["data/*/*.trimmed.*.fastq", "data/*/*.pear.*.fastq",
 "data/*/*all.singles.fastq"]
@@ -86,7 +86,7 @@ rule PhiX_hits:
     shell:
         "nhmmer --tblout {output} tools/PhiX.fna {input}"
 
-# Generation of assembly statistics using a modified GetGenomeStats.py
+# Assembly statistics and contig filtering using a modified GetGenomeStats.py
 rule assembly_stats:
     input:
         contigs = "data/{samples}/assembly/contigs.fasta",

@@ -16,3 +16,4 @@ Ensure that you have a recent version of conda installed on your computer. I rec
 5. To remove intermediate files, type `snakemake clean`.
 
 ## Output
+This pipeline produces genomes in the `data/` directory. Each genome is in a subdirectory named after the strain that it contains. There should be two files, `assembly_stats.txt` and a fasta file, as well as a directory which contains annotation information. 

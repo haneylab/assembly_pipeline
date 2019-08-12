@@ -26,8 +26,6 @@ rule quality_trim:
         fu="data/{samples}/{samples}.trimmed.1.u.fastq",
         rp="data/{samples}/{samples}.trimmed.2.p.fastq",
         ru="data/{samples}/{samples}.trimmed.2.u.fastq",
-    log:
-        "data/{samples}/logs/trim_log.txt"
     shell:
         "trimmomatic PE {input.rf} {input.rr} \
         {output.fp} {output.fu} {output.rp} {output.ru} \
@@ -45,8 +43,6 @@ rule pear:
         uf = "data/{samples}/{samples}.pear.unassembled.forward.fastq",
         ur = "data/{samples}/{samples}.pear.unassembled.reverse.fastq",
         a = "data/{samples}/{samples}.pear.assembled.fastq"
-    log:
-        "data/{samples}/logs/pear_log.txt"
     shell:
         "pear -j 4 -f {input.fw} -r {input.rev} -o {params}"
 
@@ -71,8 +67,6 @@ rule assemble:
         "data/{samples}/assembly"
     output:
         contigs = "data/{samples}/assembly/contigs.fasta"
-    log:
-        "data/{samples}/logs/assembly_log.txt"
     shell:
         "spades.py -m 16 -s {input.singles} -1 {input.fw} -2 {input.rev} \
         --careful --cov-cutoff auto -o {params}"

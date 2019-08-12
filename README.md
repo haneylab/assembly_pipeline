@@ -5,7 +5,7 @@ This pipeline can be used to automatically assemble bacterial genomes sequenced 
 Ensure that you have a recent version of conda installed on your computer. I recommend the Python 3.7 version of Miniconda which you can install [here](https://docs.conda.io/en/latest/miniconda.html). Once you have conda, navigate to this repo in your command line and make a new conda environment with the command `conda env create -f dependencies.yml`. This will install all of the software needed to run the pipeline.
 
 ## Usage
-1. Copy your read files into the `data/reads/` directory and rename them so that they fit the form {strain}_1.fastq and {strain}_2.fastq for forward and reverse reads, respectively.
+1. Copy your read files into the `data/reads/` directory and rename them so that they fit the form **strain**_1.fastq and **strain**_2.fastq for forward and reverse reads, respectively.
 
 2. Run the command `chmod u-w data/reads/` so that you can't accidentally delete or rewrite your read files.
 

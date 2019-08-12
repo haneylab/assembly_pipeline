@@ -1,2 +1,3 @@
-data/
+.DS_Store
+data/reads/*.fastq
 *.svg

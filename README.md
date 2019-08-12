@@ -11,9 +11,14 @@ Ensure that you have a recent version of conda installed on your computer. I rec
 
 3. Open the `Snakefile` in your favourite text editor, like nano or vim. Change the `SAMPLES` list on line 5 so that it contains your strains. Strain names need to be in quotations and separated by commas, and the entire list needs to be enclosed in square brackets.
 
-4. In your terminal, type `snakemake` and wait for the pipeline to run.
+4. Activate the conda enviroment by typing `conda activate assembly_pipeline`. In your terminal, type `snakemake` and wait for the pipeline to run.
 
-5. To remove intermediate files, type `snakemake clean`.
+5. To remove intermediate files, type `snakemake clean`. You can uninstall all of the software by deactivating the conda environment and deleting it with the commands:
+
+```
+conda deactivate assembly_pipeline
+conda env remove -n assembly_pipeline
+```
 
 ## Output
 This pipeline produces genomes in the `data/` directory. Each genome is in a subdirectory named after the strain that it contains. There should be two files, `assembly_stats.txt` and a fasta file, as well as a directory which contains annotation information. 

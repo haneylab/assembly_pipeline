@@ -7,7 +7,7 @@ Ensure that you have a recent version of conda installed on your computer. I rec
 ## Usage
 1. Copy your read files into the `data/reads/` directory and rename them so that they fit the form **strain**_1.fastq and **strain**_2.fastq for forward and reverse reads, respectively.
 
-2. Run the command `chmod u-w data/reads/` so that you can't accidentally delete or rewrite your read files.
+2. Run the command `chmod u-w data/reads/*.fastq` so that you can't accidentally delete or rewrite your read files.
 
 3. Open the `Snakefile` in your favourite text editor, like nano or vim. Change the `SAMPLES` list on line 5 so that it contains your strains. Strain names need to be in quotations and separated by commas, and the entire list needs to be enclosed in square brackets.
 
